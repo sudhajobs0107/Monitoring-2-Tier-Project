@@ -1,13 +1,13 @@
 # **Monitoring Project :smile:**
-### In this we will do monitoring using Grafana and Prometheus of our 2-Tier-Flask-App-and-MYSQL Project that we did earlier. If you're interested in exploring my 2-Tier Flask App with MySQL project, check out my project here: [Click here](https://github.com/sudhajobs0107/2-Tier-Flask-App-and-MYSQL.git).
-![Architecture](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/public/assets/architecture.png)
+### In this we will do monitoring using Grafana and Prometheus of our 2-Tier-Flask-App-and-MYSQL Project that we did earlier. If you're interested in exploring my 2-Tier Flask App with MySQL project, to check out my project : [Click here](https://github.com/sudhajobs0107/2-Tier-Flask-App-and-MYSQL.git).
+![Architecture](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/images/monitoring-diagram.gif)
 
 ___
 # Prerequisites
 ### Before starting the project you should have these things in your system :-
 >+ ### Account on AWS
 >+ ### The application should be running
-![App running](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/public/assets/architecture.png)
+![App running](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/images/app-running.PNG)
 
 ___
 # **Part 1** : **Install Prometheus**
@@ -20,48 +20,15 @@ wget https://raw.githubusercontent.com/prometheus/prometheus/main/documentation/
 ```
 ls
 ```
-![prom.yml](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/public/assets/zip.PNG)
 
-+ ### Now we will make a docker-container to run prometheus, redis & cAdvisor for this write a docker-compose file and run command **docker-compose up -d**.
-```
-version: '3.2'
-services:
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    ports:
-    - 9090:9090
-    command:
-    - --config.file=/etc/prometheus/prometheus.yml
-    volumes:
-    - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    depends_on:
-    - cadvisor
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:latest
-    container_name: cadvisor
-    ports:
-    - 8080:8080
-    volumes:
-    - /:/rootfs:ro
-    - /var/run:/var/run:rw
-    - /sys:/sys:ro
-    - /var/lib/docker/:/var/lib/docker:ro
-    depends_on:
-    - redis
-  redis:
-    image: redis:latest
-    container_name: redis
-    ports:
-    - 6379:6379
-```
++ ### Now we will make a docker-container.yml to run prometheus, redis & cAdvisor for this write a docker-compose file and run command **docker-compose up -d**.
 + ### Now if we will do **docker ps** we will see our prometheus, cadvisor & redis container is running.
-![prom images](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/public/assets/zip.PNG)
+![prom images](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/images/prom-images.PNG)
 
 + ### Now we saw prometheus container is running. So copy and paste **Public IPv4 address:9090** in a new tab and you will see :- 
-![pro-running](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/public/assets/promethus-page.PNG)
+![pro-running](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/images/pro-running.PNG)
 + ### Now we saw cadvisor container is running. So copy and paste **Public IPv4 address:8080** in a new tab and you will see :- 
-![cadvisor](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/public/assets/promethus-page.PNG)
+![cadvisor](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/images/cAdvisor.PNG)
 
 + ### Now we want docker's log and our app container is already added in cAdvisor. So add cAdvisor code in prometheus.yml as given below :-
 ```
@@ -72,9 +39,9 @@ services:
 + ### Now once we have to restart prometheus container so that prometheus.yml will also update inside our prometheous container. To restart use command docker restart container_id.
 
 + ### Now if we do refresh prometheus page, we will see docker up.
-![docker-up](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/public/assets/metrics.PNG)
+![docker-up](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/images/docker-up.PNG)
 + ### Now if we want see cpu load average in graph, so Goto Graph → Write → rate(container_cpu_load_average_10s{name="node-app"}[5m]).
-![graph](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/public/assets/metrics.PNG)
+![graph](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/images/graph.PNG)
 
 ___
 # **Part 2** : Install **Grafana** and set it up to **Work with Prometheus**
@@ -102,11 +69,11 @@ sudo systemctl start grafana-server
 ```
 sudo systemctl status grafana-server
 ```
-![grafana-active](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/public/assets/zip.PNG)
+![grafana-active](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/images/grafana-active.PNG)
 + ### Now copy and paste **Public IPv4 address:3000** in a new tab and you will see grafana interface :- 
-![login-interface](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/public/assets/promethus-page.PNG)
+![login-interface](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/images/login-interface.PNG)
 + ### Now to login grafana we don't know username & password, so initial username and password for Grafana are username=admin & password=admin.
-![dashboard-interface](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/public/assets/promethus-page.PNG)
+![dashboard-interface](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/images/dashboard-interface.PNG)
 + ### Now to visualize Prometheus metrics in Grafana, we have to add prometheus(data source) in grafana. So Goto Connection → Search & Click on "Prometheus" → Click "Add new data source" → In Connection Paste Prometheus URL → Save & Test.
 
 ___
@@ -114,10 +81,10 @@ ___
 + ### Now we will make a dashboard to make it easier to view metrics, you can follow these steps :-
 
 + ### Click "Dashboard" → Click "Add visualization" → Select "Prometheus" → Select Metric "container_memory_usage_bytes" → Select Name of container "ubuntu_flaskapp_1" → Click "Run queries" → We will a visualization dashboard of our container memory.
- ![dashboard](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/public/assets/promethus-page.PNG)
+ ![dashboard](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/images/dashboard.PNG)
 
  + ### Same we can see other metrics also like errors of app container.
- ![dashboard2](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/public/assets/promethus-page.PNG)
+ ![dashboard2](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/images/dashboard2.PNG)
 + ### We've successfully installed and set up Grafana to work with Prometheus for monitoring and visualization.
 
 ___
@@ -141,7 +108,7 @@ node-exporter:
       - 9100
 ```
 + ### Now run command **docker-compose up -d** and if we will do **docker ps** we will see our node-exporter container is running.
-![node-image](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/public/assets/zip.PNG)
+![node-image](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/images/node-image.PNG)
 
 + ### Now to configure Prometheus to scrape metrics from Node Exporter, we need to modify the prometheus.yml file so :-
 ```
@@ -155,57 +122,11 @@ vim prometheus.yml
 ```
 + ### Now once restart prometheus container.
 + ### Now if we do refresh prometheus page, we will see node-exporter up.
-![node-up](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/public/assets/metrics.PNG)
+![node-up](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/images/node-up.PNG)
 + ### Now Prometheus is already added in our connection in Grafana. So to view node metrics, we can import a pre-configured dashboard follow these steps :-
 + ### Click on Dashboard → Click "Import" → Paste id (e.g., code 1860) → Click "Load" → Select data source "Prometheus" → Click "Import".
 + ### Now we will see a Grafana dashboard set up to visualize metrics from Prometheus.
-![dashboad3-node-exporter](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/public/assets/node.PNG)
-+ ### We can also give stress on cpu and check the metrics. So run command :-
-### 1. sudo apt install stress
-### 2. stress -c 60 --timeout 10
-
-___
-## **Loki & Promtail**
-+ ### Loki we use for log aggregation(the process of gathering logs from multiple sources and centralizing them in one location for easier management, analysis and storage). Promtail is a scraper, we use it for to collect logs from various sources and ship them to Loki for aggregation and storage. It acts similarly to how Logstash or Fluentd work in an ELK stack. Promtail is designed to work perfectly with Loki, making it a key component of the Loki system.
-+ ### Now to configure **Loki** use command as given below :-
-```
-wget https://raw.githubusercontent.com/grafana/loki/v2.8.0/cmd/loki/loki-local-config.yaml -O loki-config.yaml
-```
-+ ### Now to configure **Promtail** use command as given below :-
-```
-wget https://raw.githubusercontent.com/grafana/loki/v2.8.0/clients/cmd/promtail/promtail-docker-config.yaml -O promtail-config.yaml
-```
-+ ### Now we will run loki docker-container, for this run command:-
-```
-docker run -d --name loki -v $(pwd):/mnt/config -p 3100:3100 grafana/loki:2.8.0 --config.file=/mnt/config/loki-config.yaml
-```
-+ ### Now we will run promtail docker-container, for this run command:-
-```
-docker run -d --name promtail -v $(pwd):/mnt/config -v /var/log:/var/log --link loki grafana/promtail:2.8.0 --config.file=/mnt/config/promtail-config.yaml
-```
-+ ### Now if we will do **docker ps** we will see our loki & promtail container is running.
-![loki&prom-images](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/public/assets/zip.PNG)
-+ ### Now to visualize Loki logs in Grafana, we have to add loki(data source) in grafana. So Go To Connection → Search & Click on "Loki" → Click "Add new data source" → In Connection Paste Loki URL → Save & Test.
-+ ### Suppose we will want to see nginx's logs in grafana. So install nginx :-
-```
-sudo apt-get install nginx
-```
-+ ### Open port no. 80. Copy & paste **Public IPv4 address:80** in a new tab and you will see :-
-![nginx](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/public/assets/node.PNG)
-+ ### Now if we do Public IPv4 address:80/hello so we will get error 404 Not Found. So in system nginx's logs will store in path : /var/log/nginx. Copy this path and add a job in promtail.yml as given below :-
-```
-- job_name: nginx
-  static_configs:
-  - targets:
-      - localhost
-    labels:
-      job: nginxlogs
-      __path__: /var/log/nginx/*
-```
-+ ### Now once restart promtail container. So to view logs, we can import a pre-configured dashboard follow these steps :-
-+ ### Click on Dashboard → Click "New" & "Import" → Paste id (e.g., code 1860) → Click "Load" → Select data source "Loki" → Click "Import".
-+ ### Now we will see a Grafana dashboard set up to visualize logs from Loki.
-![logs](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/public/assets/node.PNG)
+![dashboad3-node-exporter](https://github.com/sudhajobs0107/Monitoring-2-Tier/blob/main/images/dashboard3-node-exporter.PNG)
 
 
 ___
